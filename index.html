@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>時間と料金の計算ツール</title>
+  <style>
+    html {
+      font-family: 'Helvetica Neue', sans-serif;
+      background: linear-gradient(135deg, #eef2f3, #dfe6e9);
+      color: #2d3436;
+      margin: 0;
+      padding: 0;
+    }
+    .wrapper {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      padding: 2rem;
+    }
+    .card {
+      background: #ffffff;
+      padding: 2.5rem;
+      border-radius: 16px;
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.1);
+      max-width: 400px;
+      width: 100%;
+    }
+    h1 {
+      font-size: 1.8rem;
+      margin-bottom: 1.5rem;
+      text-align: center;
+      color: #1e272e;
+    }
+    label {
+      font-weight: 600;
+      display: block;
+      margin-top: 1.2rem;
+      margin-bottom: 0.3rem;
+    }
+    input {
+      width: 100%;
+      padding: 0.75rem;
+      font-size: 1rem;
+      border: 1px solid #ced6e0;
+      border-radius: 8px;
+      transition: border-color 0.3s;
+    }
+    input:focus {
+      border-color: #0984e3;
+      outline: none;
+    }
+    button {
+      width: 100%;
+      margin-top: 2rem;
+      padding: 0.9rem;
+      font-size: 1rem;
+      font-weight: bold;
+      color: white;
+      background: #0984e3;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+    button:hover {
+      background: #74b9ff;
+    }
+    #result {
+      margin-top: 1.8rem;
+      font-size: 1.2rem;
+      text-align: center;
+      font-weight: 500;
+      color: #2d3436;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrapper">
+    <div class="card">
+      <h1>時間と料金の計算ツール</h1>
+
+      <label for="baseMinutes">基準時間（分）</label>
+      <input type="number" id="baseMinutes" placeholder="e.g. 30">
+
+      <label for="basePrice">基準金額（円）</label>
+      <input type="number" id="basePrice" placeholder="e.g. 500">
+
+      <label for="targetMinutes">計算したい時間（分）</label>
+      <input type="number" id="targetMinutes" placeholder="e.g. 75">
+
+      <button onclick="calculate()">計算する</button>
+
+      <div id="result"></div>
+    </div>
+  </div>
+
+  <script>
+    function calculate() {
+      const baseMin = parseFloat(document.getElementById('baseMinutes').value);
+      const basePrice = parseFloat(document.getElementById('basePrice').value);
+      const targetMin = parseFloat(document.getElementById('targetMinutes').value);
+
+      if (isNaN(baseMin) || isNaN(basePrice) || isNaN(targetMin)) {
+        document.getElementById('result').innerText = 'すべての項目を正しく入力してください。';
+        return;
+      }
+
+      const unitPrice = basePrice / baseMin;
+      const result = Math.ceil(unitPrice * targetMin / 100) * 100;
+
+      document.getElementById('result').innerText = `${targetMin} 分 は ${result} 円 です。`;
+    }
+  </script>
+</body>
+</html>
