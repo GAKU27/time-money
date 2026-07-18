@@ -4,76 +4,216 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>時間と料金の計算ツール</title>
+  <meta name="description" content="基準になる時間と金額から、知りたい時間ぶんの料金を割り出します。" />
   <style>
+    :root {
+      --paper: #f6f3ed;
+      --card: #fffdfa;
+      --ink: #3a3733;
+      --ink-soft: #7d766c;
+      --line: #e3ddd2;
+      --line-hover: #cfc7b9;
+      --accent: #7d8b6a;
+      --accent-deep: #6a7859;
+      --ring: rgba(125, 139, 106, 0.16);
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --paper: #23211e;
+        --card: #2c2925;
+        --ink: #ece7de;
+        --ink-soft: #a49c90;
+        --line: #3d3934;
+        --line-hover: #4e4942;
+        --accent: #8b9a76;
+        --accent-deep: #9dab88;
+        --ring: rgba(139, 154, 118, 0.22);
+      }
+    }
+
+    * { box-sizing: border-box; }
+
     html {
-      font-family: 'Helvetica Neue', sans-serif;
-      background: linear-gradient(135deg, #eef2f3, #dfe6e9);
-      color: #2d3436;
+      font-family: 'Hiragino Sans', 'Noto Sans JP', 'Yu Gothic', Meiryo, sans-serif;
+      background: var(--paper);
+      color: var(--ink);
       margin: 0;
       padding: 0;
+      -webkit-text-size-adjust: 100%;
     }
+
     .wrapper {
       display: flex;
       flex-direction: column;
       justify-content: center;
       align-items: center;
       min-height: 100vh;
-      padding: 2rem;
+      padding: 2rem 1.25rem;
     }
+
     .card {
-      background: #ffffff;
-      padding: 2.5rem;
-      border-radius: 16px;
-      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.1);
-      max-width: 400px;
+      background: var(--card);
+      padding: 2.75rem 2.25rem;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      box-shadow: 0 1px 2px rgba(58, 55, 51, 0.04),
+                  0 8px 28px rgba(58, 55, 51, 0.06);
+      max-width: 420px;
       width: 100%;
     }
+
     h1 {
-      font-size: 1.8rem;
-      margin-bottom: 1.5rem;
+      font-family: 'Hiragino Mincho ProN', 'Yu Mincho', 'Noto Serif JP', serif;
+      font-size: 1.5rem;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+      margin: 0;
       text-align: center;
-      color: #1e272e;
+      color: var(--ink);
     }
+
+    .lede {
+      margin: 0.7rem 0 0;
+      text-align: center;
+      font-size: 0.875rem;
+      line-height: 1.8;
+      color: var(--ink-soft);
+    }
+
+    .rule {
+      border: 0;
+      border-top: 1px solid var(--line);
+      margin: 1.75rem 0 0;
+    }
+
+    .field {
+      margin-top: 1.4rem;
+    }
+
     label {
       font-weight: 600;
+      font-size: 0.9rem;
       display: block;
-      margin-top: 1.2rem;
-      margin-bottom: 0.3rem;
+      margin-bottom: 0.45rem;
+      letter-spacing: 0.01em;
     }
+
+    .hint {
+      font-size: 0.775rem;
+      font-weight: 400;
+      color: var(--ink-soft);
+      margin-left: 0.5em;
+    }
+
+    .input-line {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
     input {
       width: 100%;
-      padding: 0.75rem;
+      padding: 0.72rem 2.6rem 0.72rem 0.85rem;
       font-size: 1rem;
-      border: 1px solid #ced6e0;
-      border-radius: 8px;
-      transition: border-color 0.3s;
+      font-family: inherit;
+      color: var(--ink);
+      background: transparent;
+      border: 1px solid var(--line);
+      border-radius: 9px;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+      -moz-appearance: textfield;
     }
+
+    input::-webkit-outer-spin-button,
+    input::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+
+    input::placeholder {
+      color: var(--ink-soft);
+      opacity: 0.6;
+    }
+
+    input:hover {
+      border-color: var(--line-hover);
+    }
+
     input:focus {
-      border-color: #0984e3;
+      border-color: var(--accent);
       outline: none;
+      box-shadow: 0 0 0 3px var(--ring);
     }
+
+    .unit {
+      position: absolute;
+      right: 0.95rem;
+      font-size: 0.875rem;
+      color: var(--ink-soft);
+      pointer-events: none;
+    }
+
     button {
       width: 100%;
       margin-top: 2rem;
-      padding: 0.9rem;
+      padding: 0.85rem;
       font-size: 1rem;
-      font-weight: bold;
-      color: white;
-      background: #0984e3;
+      font-family: inherit;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      color: #fffdfa;
+      background: var(--accent);
       border: none;
-      border-radius: 10px;
+      border-radius: 9px;
       cursor: pointer;
-      transition: background 0.3s ease;
+      transition: background 0.2s ease, transform 0.06s ease;
     }
+
     button:hover {
-      background: #74b9ff;
+      background: var(--accent-deep);
     }
+
+    button:active {
+      transform: translateY(1px);
+    }
+
+    button:focus-visible {
+      outline: 2px solid var(--accent-deep);
+      outline-offset: 2px;
+    }
+
     #result {
-      margin-top: 1.8rem;
-      font-size: 1.2rem;
+      margin-top: 1.6rem;
+      padding: 0 0.5rem;
+      min-height: 1.7em;
+      font-size: 1.15rem;
+      line-height: 1.6;
       text-align: center;
-      font-weight: 500;
-      color: #2d3436;
+      font-weight: 600;
+      color: var(--ink);
+    }
+
+    #result:empty::before {
+      content: '3つの項目を入力してください';
+      font-size: 0.875rem;
+      font-weight: 400;
+      color: var(--ink-soft);
+    }
+
+    .note {
+      margin: 1.5rem 0 0;
+      padding-top: 1.15rem;
+      border-top: 1px solid var(--line);
+      font-size: 0.8rem;
+      line-height: 1.8;
+      text-align: center;
+      color: var(--ink-soft);
+    }
+
+    @media (max-width: 420px) {
+      .card { padding: 2rem 1.5rem; }
+      h1 { font-size: 1.35rem; }
     }
   </style>
 </head>
@@ -81,19 +221,39 @@
   <div class="wrapper">
     <div class="card">
       <h1>時間と料金の計算ツール</h1>
+      <p class="lede">基準になる時間と金額から、<br>知りたい時間ぶんの料金を割り出します。</p>
 
-      <label for="baseMinutes">基準時間（分）</label>
-      <input type="number" id="baseMinutes" placeholder="e.g. 30">
+      <hr class="rule">
 
-      <label for="basePrice">基準金額（円）</label>
-      <input type="number" id="basePrice" placeholder="e.g. 500">
+      <div class="field">
+        <label for="baseMinutes">基準の時間 <span class="hint">もとになる時間</span></label>
+        <div class="input-line">
+          <input type="number" id="baseMinutes" inputmode="decimal" min="0" step="any" placeholder="30">
+          <span class="unit">分</span>
+        </div>
+      </div>
 
-      <label for="targetMinutes">計算したい時間（分）</label>
-      <input type="number" id="targetMinutes" placeholder="e.g. 75">
+      <div class="field">
+        <label for="basePrice">基準の金額 <span class="hint">その時間ぶんの料金</span></label>
+        <div class="input-line">
+          <input type="number" id="basePrice" inputmode="decimal" min="0" step="any" placeholder="500">
+          <span class="unit">円</span>
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="targetMinutes">知りたい時間 <span class="hint">料金を求めたい時間</span></label>
+        <div class="input-line">
+          <input type="number" id="targetMinutes" inputmode="decimal" min="0" step="any" placeholder="75">
+          <span class="unit">分</span>
+        </div>
+      </div>
 
       <button onclick="calculate()">計算する</button>
 
       <div id="result"></div>
+
+      <p class="note">1分あたりの単価を求めて掛け合わせ、<br>100円単位に切り上げた金額を表示します。</p>
     </div>
   </div>
 
